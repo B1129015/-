@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './App.css'; // 確保你有相應的CSS文件
 
 const characterImages = [
-  'build/character1.png',
-  'build/character2.png',
-  'build/character3.png',
-  'build/character4.png',
-  'build/character5.png',
-  'build/character6.png',
-  'build/character7.png',
-  'build/character8.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/8806728_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/3293406_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/7805694_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/4967652_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/1192195_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/8375348_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/9744731_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/7109860_orig.png',
 ];
 
 const shuffleArray = (array) => {
