@@ -1,7 +1,11 @@
+/* General App Styling */
 .App {
   text-align: center;
+  font-family: 'Arial', sans-serif;
+  display: flex;
 }
 
+/* Header Styling */
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -11,14 +15,18 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  flex: 1;
 }
 
+/* Grid Container */
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 100px);
   gap: 10px;
+  margin: 20px;
 }
 
+/* Card Styling */
 .card {
   width: 100px;
   height: 100px;
@@ -59,12 +67,37 @@
 .card-back {
   background-color: #ff6347;
   transform: rotateY(180deg);
+}
+
+/* Image inside the card back */
+.card-back img {
+  width: 80%;
+  height: 80%;
+}
+
+/* Leaderboard Styling */
+.leaderboard {
+  background-image: url('https://mario-family.weebly.com/uploads/2/7/4/1/27417881/8806728_orig.png');
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px;
+  width: 300px;
+  max-width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: white;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.card-back img {
-  width: 80%;
-  height: 80%;
+.leaderboard h2 {
+  margin: 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  width: 100%;
+  text-align: center;
 }

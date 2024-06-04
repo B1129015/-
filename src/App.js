@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './App.css'; // 確保你有相應的CSS文件
 
 const characterImages = [
-  '/character1.png',
-  '/character2.png',
-  '/character3.png',
-  '/character4.png',
-  '/character5.png',
-  '/character6.png',
-  '/character7.png',
-  '/character8.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/8806728_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/3293406_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/7805694_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/4967652_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/1192195_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/8375348_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/9744731_orig.png',
+  'https://mario-family.weebly.com/uploads/2/7/4/1/27417881/7109860_orig.png',
 ];
 
 const shuffleArray = (array) => {
@@ -36,9 +36,15 @@ const App = () => {
   const [firstCard, setFirstCard] = useState(null);
   const [secondCard, setSecondCard] = useState(null);
   const [steps, setSteps] = useState(0);
+  const [playerName, setPlayerName] = useState('');
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [nameError, setNameError] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (firstCard && secondCard) {
+      setIsProcessing(true);
       if (firstCard.value === secondCard.value) {
         setCards((prevCards) =>
           prevCards.map((card) =>
@@ -47,6 +53,7 @@ const App = () => {
               : card
           )
         );
+        setIsProcessing(false);
       } else {
         setTimeout(() => {
           setCards((prevCards) =>
@@ -56,6 +63,7 @@ const App = () => {
                 : card
             )
           );
+          setIsProcessing(false);
         }, 1000);
       }
       setFirstCard(null);
@@ -65,7 +73,7 @@ const App = () => {
   }, [firstCard, secondCard]);
 
   const handleCardClick = (card) => {
-    if (card.isFlipped || (firstCard && secondCard)) return;
+    if (card.isFlipped || isProcessing) return;
     setCards((prevCards) =>
       prevCards.map((c) =>
         c.id === card.id ? { ...c, isFlipped: true } : c
@@ -74,30 +82,96 @@ const App = () => {
     firstCard ? setSecondCard(card) : setFirstCard(card);
   };
 
+  const handleRestart = () => {
+    setCards(generateCards());
+    setFirstCard(null);
+    setSecondCard(null);
+    setSteps(0);
+    setIsGameStarted(false);
+    setPlayerName('');
+    setNameError('');
+  };
+
+  const handleStartGame = () => {
+    if (playerName.trim()) {
+      if (leaderboard.some(entry => entry.name === playerName.trim())) {
+        setNameError('該名字已存在，請使用其他名字。');
+      } else {
+        setIsGameStarted(true);
+        setNameError('');
+      }
+    } else {
+      setNameError('請輸入玩家名字');
+    }
+  };
+
+  const handleFinishGame = () => {
+    setLeaderboard((prevLeaderboard) => [
+      ...prevLeaderboard,
+      { name: playerName, steps },
+    ].sort((a, b) => a.steps - b.steps));
+  };
+
+  useEffect(() => {
+    if (cards.every(card => card.isMatched)) {
+      handleFinishGame();
+    }
+  }, [cards]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>配對遊戲</h1>
-        <div className="grid">
-          {cards.map((card) => (
-            <div
-              key={card.id}
-              className={`card ${card.isFlipped ? 'flipped' : ''}`}
-              onClick={() => handleCardClick(card)}
-            >
-              <div className="card-inner">
-                <div className="card-front">?</div>
-                <div className="card-back">
-                  <img src={card.value} alt="character" />
+      <div className="App-header">
+        {!isGameStarted ? (
+          <div>
+            <h1>配對遊戲</h1>
+            <input
+              type="text"
+              placeholder="輸入你的名字"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+            />
+            <button onClick={handleStartGame}>開始遊戲</button>
+            {nameError && <p style={{ color: 'red' }}>{nameError}</p>}
+          </div>
+        ) : (
+          <>
+            <h1>配對遊戲</h1>
+            <div className="grid">
+              {cards.map((card) => (
+                <div
+                  key={card.id}
+                  className={`card ${card.isFlipped ? 'flipped' : ''}`}
+                  onClick={() => handleCardClick(card)}
+                >
+                  <div className="card-inner">
+                    <div className="card-front">?</div>
+                    <div className="card-back">
+                      <img src={card.value} alt="character" />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-        {cards.every(card => card.isMatched) && (
-          <p>你完成了遊戲！總共使用了 {steps} 步。</p>
+            <p>步數: {steps}</p>
+            {cards.every(card => card.isMatched) && (
+              <>
+                <p>你完成了遊戲！總共使用了 {steps} 步。</p>
+                <button onClick={handleRestart}>再玩一次</button>
+              </>
+            )}
+          </>
         )}
-      </header>
+      </div>
+      <div className="leaderboard">
+        <h2>排行榜</h2>
+        <ul>
+          {leaderboard.map((entry, index) => (
+            <li key={index}>
+              {entry.name}: {entry.steps} 步
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
